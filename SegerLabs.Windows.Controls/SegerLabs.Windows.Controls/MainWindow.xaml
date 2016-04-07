@@ -7,18 +7,35 @@
         mc:Ignorable="d"
         Title="SegerLabs Progress Bar Style" Height="350" Width="525">
     <Window.Resources>
+        <local:BorderClipConverter x:Key="BorderClip"/>
         <Style TargetType="{x:Type ProgressBar}">
             <Setter Property="Height" Value="16" />
             <Setter Property="IsIndeterminate" Value="False" />
+            <Setter Property="Background" Value="#2ea1d7"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ProgressBar" >
-                        <Grid>
-                            <Grid x:Name="PART_Track">
-                                <Border CornerRadius="8" Background="LightGray" Margin="0,0,50,0"></Border>
-                                <Grid Name="PART_Indicator" HorizontalAlignment="Left">
-                                    <Border CornerRadius="8" Background="#2ea1d7" Margin="0,0,50,0"></Border>
-                                </Grid>
+                        <Grid x:Name="TemplateRoot" SnapsToDevicePixels="true">
+                            <Grid Margin="0,0,50,0">
+
+                                <Rectangle x:Name="PART_Track" Fill="White" />
+
+                                <Border x:Name="roundBorder" Background="LightGray" CornerRadius="8" />
+
+                                <Border x:Name="PART_Indicator" HorizontalAlignment="Left">
+
+                                    <Border.Clip>
+                                        <MultiBinding Converter="{StaticResource BorderClip}">
+                                            <Binding Path="ActualWidth" ElementName="roundBorder" />
+                                            <Binding Path="ActualHeight" ElementName="roundBorder" />
+                                            <Binding Path="CornerRadius" ElementName="roundBorder" />
+                                        </MultiBinding>
+                                    </Border.Clip>
+
+                                    <Grid x:Name="Foreground">
+                                        <Rectangle x:Name="Indicator" Fill="{TemplateBinding Background}" />
+                                    </Grid>
+                                </Border>
                             </Grid>
                             <Path Name="_TagBackground" Fill="#B3B3B3" Data="M 0 0 H 44 A 9 9 0 0 1 44 16 H 0 A 9 9 0 0 0 0 0 z" HorizontalAlignment="Right"/>
                             <TextBlock Name="_Tag" HorizontalAlignment="Right" Text="{TemplateBinding Tag}" Foreground="White" Margin="0,0,10,0"/>
@@ -42,6 +59,7 @@
     </Window.Resources>
     <Grid>
         <StackPanel>
+            <ProgressBar Value="10" Tag="10%" Maximum="100" Margin="5"/>
             <ProgressBar Value="25" Tag="25%" Maximum="100" Margin="5"/>
             <ProgressBar Value="50" Tag="50%" Maximum="100" Margin="5"/>
             <ProgressBar Value="75" Tag="75%" Maximum="100" Margin="5"/>
